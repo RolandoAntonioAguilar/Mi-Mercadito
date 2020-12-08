@@ -148,3 +148,13 @@ case "Entregas":
     mw_redirectToLogin($_SERVER["QUERY_STRING"]);
   die();
 case "Entrega":
+    ($logged)?
+    include_once "controllers/security/Entrega.control.php":
+    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+  die();
+case "Manejos":
+  ($logged)?
+    include_once "controllers/security/Manejos.control.php":
+    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+  die();
+case "Manejo":

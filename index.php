@@ -178,3 +178,13 @@ case "Checkout":
     include_once "controllers/user/Checkout.control.php":
     mw_redirectToLogin($_SERVER["QUERY_STRING"]);
   die();
+  case "Historial":
+    ($logged)?
+      include_once "controllers/user/history.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
+case "Change":
+    ($logged)?
+      include_once "controllers/user/change.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();

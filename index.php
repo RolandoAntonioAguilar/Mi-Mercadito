@@ -19,32 +19,29 @@ require_once "libs/utilities.php";
 
 $pageRequest = "home";
 
+
 if (isset($_GET["page"])) {
-    $pageRequest = $_GET["page"];
+  $pageRequest = $_GET["page"];
 }
 
-//Incorporando los midlewares son codigos que se deben ejecutar
-//Siempre
+
 require_once "controllers/mw/verificar.mw.php";
 require_once "controllers/mw/site.mw.php";
 
-// aqui no se toca jajaja la funcion de este index es
-// llamar al controlador adecuado para manejar el
-// index.php?page=modulo
 
-    //Este switch se encarga de todo el enrutamiento público
+//Este switch se encarga de todo el enrutamiento público
 switch ($pageRequest) {
-    //Accesos Publicos
+  //Accesos Publicos
 case "home":
-    //llamar al controlador
-    include_once "controllers/home.control.php";
-    die();
+  //llamar al controlador
+  include_once "controllers/home.control.php";
+  die();
 case "login":
-    include_once "controllers/security/login.control.php";
-    die();
+  include_once "controllers/security/login.control.php";
+  die();
 case "logout":
-    include_once "controllers/security/logout.control.php";
-    die();
+  include_once "controllers/security/logout.control.php";
+  die();
 }
 
 //Este switch se encarga de todo el enrutamiento que ocupa login
@@ -60,6 +57,9 @@ if ($logged) {
       generarMenu($_SESSION["userEmail"]);
     } 
 }
+
+require_once "controllers/mw/support.mw.php";
+switch ($pageRequest) {
 
 
 case "start":
@@ -84,30 +84,30 @@ case "Users":
     die();
 case "User":
     ($logged)?
-    include_once "controllers/security/User.control.php":
-    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-  die();
+      include_once "controllers/security/User.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
 case "Roles":
-  ($logged)?
-    include_once "controllers/security/Roles.control.php":
-    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-  die();
+    ($logged)?
+      include_once "controllers/security/Roles.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
 case "Tipos":
-  ($logged)?
-    include_once "controllers/security/Tipos.control.php":
-    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-  die();
+    ($logged)?
+      include_once "controllers/security/Tipos.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
 case "Tipo":
-  ($logged)?
-    include_once "controllers/security/Tipo.control.php":
-    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-  die();
+    ($logged)?
+      include_once "controllers/security/Tipo.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
 case "Categorias":
-  ($logged)?
-    include_once "controllers/security/Categorias.control.php":
-    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-  die();
-  case "Categoria":
+    ($logged)?
+      include_once "controllers/security/Categorias.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
+case "Categoria":
     ($logged)?
       include_once "controllers/security/Categoria.control.php":
       mw_redirectToLogin($_SERVER["QUERY_STRING"]);
@@ -129,56 +129,56 @@ case "Accesos":
     die();
 case "Acceso":
     ($logged)?
-    include_once "controllers/security/Acceso.control.php":
-    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-  die();
+      include_once "controllers/security/Acceso.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
 case "Productos":
-  ($logged)?
-    include_once "controllers/security/Productos.control.php":
-    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-  die();
+    ($logged)?
+      include_once "controllers/security/Productos.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
 case "Producto":
     ($logged)?
-    include_once "controllers/security/Producto.control.php":
-    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-  die();
+      include_once "controllers/security/Producto.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
 case "Entregas":
-  ($logged)?
-    include_once "controllers/security/Entregas.control.php":
-    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-  die();
+    ($logged)?
+      include_once "controllers/security/Entregas.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
 case "Entrega":
     ($logged)?
-    include_once "controllers/security/Entrega.control.php":
-    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-  die();
+      include_once "controllers/security/Entrega.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
 case "Manejos":
-  ($logged)?
-    include_once "controllers/security/Manejos.control.php":
-    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-  die();
+    ($logged)?
+      include_once "controllers/security/Manejos.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
 case "Manejo":
     ($logged)?
-    include_once "controllers/security/Manejo.control.php":
-    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-  die();
+      include_once "controllers/security/Manejo.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
 case "Ordenes":
-  ($logged)?
-    include_once "controllers/security/Ordenes.control.php":
-    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-  die();
+    ($logged)?
+      include_once "controllers/security/Ordenes.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
 case "Orden":
     ($logged)?
-    include_once "controllers/security/Orden.control.php":
-    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-  die();
-          
+      include_once "controllers/security/Orden.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
+            
 case "Checkout":
-  ($logged)?
-    include_once "controllers/user/Checkout.control.php":
-    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-  die();
-  case "Historial":
+    ($logged)?
+      include_once "controllers/user/Checkout.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
+case "Historial":
     ($logged)?
       include_once "controllers/user/history.control.php":
       mw_redirectToLogin($_SERVER["QUERY_STRING"]);
@@ -188,24 +188,23 @@ case "Change":
       include_once "controllers/user/change.control.php":
       mw_redirectToLogin($_SERVER["QUERY_STRING"]);
     die();
-    case "Directions":
-        ($logged)?
-          include_once "controllers/user/directions.control.php":
-          mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-        die();        
-    case "Approved":
-        ($logged)?
-          include_once "controllers/user/approved.control.php":
-          mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-        die();
-        case "Canceled":
-            ($logged)?
-              include_once "controllers/user/canceled.control.php":
-              mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-            die();
-                                     
-        }
-        
-        addToContext("pageRequest", $pageRequest);
-        require_once "controllers/error.control.php";
-        
+case "Directions":
+    ($logged)?
+      include_once "controllers/user/directions.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();        
+case "Approved":
+    ($logged)?
+      include_once "controllers/user/approved.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
+case "Canceled":
+    ($logged)?
+      include_once "controllers/user/canceled.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
+                             
+}
+
+addToContext("pageRequest", $pageRequest);
+require_once "controllers/error.control.php";

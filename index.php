@@ -198,3 +198,14 @@ case "Change":
           include_once "controllers/user/approved.control.php":
           mw_redirectToLogin($_SERVER["QUERY_STRING"]);
         die();
+        case "Canceled":
+            ($logged)?
+              include_once "controllers/user/canceled.control.php":
+              mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+            die();
+                                     
+        }
+        
+        addToContext("pageRequest", $pageRequest);
+        require_once "controllers/error.control.php";
+        

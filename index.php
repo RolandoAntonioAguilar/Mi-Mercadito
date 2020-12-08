@@ -168,3 +168,13 @@ case "Ordenes":
     mw_redirectToLogin($_SERVER["QUERY_STRING"]);
   die();
 case "Orden":
+    ($logged)?
+    include_once "controllers/security/Orden.control.php":
+    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+  die();
+          
+case "Checkout":
+  ($logged)?
+    include_once "controllers/user/Checkout.control.php":
+    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+  die();

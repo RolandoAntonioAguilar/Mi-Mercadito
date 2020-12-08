@@ -188,3 +188,13 @@ case "Change":
       include_once "controllers/user/change.control.php":
       mw_redirectToLogin($_SERVER["QUERY_STRING"]);
     die();
+    case "Directions":
+        ($logged)?
+          include_once "controllers/user/directions.control.php":
+          mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+        die();        
+    case "Approved":
+        ($logged)?
+          include_once "controllers/user/approved.control.php":
+          mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+        die();

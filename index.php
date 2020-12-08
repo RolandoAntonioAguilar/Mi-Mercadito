@@ -138,3 +138,13 @@ case "Productos":
     mw_redirectToLogin($_SERVER["QUERY_STRING"]);
   die();
 case "Producto":
+    ($logged)?
+    include_once "controllers/security/Producto.control.php":
+    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+  die();
+case "Entregas":
+  ($logged)?
+    include_once "controllers/security/Entregas.control.php":
+    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+  die();
+case "Entrega":

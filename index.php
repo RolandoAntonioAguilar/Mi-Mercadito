@@ -52,51 +52,79 @@ $logged = mw_estaLogueado();
 if ($logged) {
     addToContext("layoutFile", "verified_layout");
     include_once 'controllers/mw/autorizar.mw.php';
-    if (!isAuthorized($pageRequest, $_SESSION["userCode"])) {
-        include_once"controllers/notauth.control.php";
+    if (!isAuthorized($pageRequest, $_SESSION["userEmail"])) {//Aqui
+        include_once "controllers/notauth.control.php";
         die();
     }
-    generarMenu($_SESSION["userCode"]);
+    else{
+      generarMenu($_SESSION["userEmail"]);
+    } 
 }
 
-require_once "controllers/mw/support.mw.php";
-switch ($pageRequest) {
-case "dashboard":
-    ($logged)?
-      include_once "controllers/dashboard.control.php":
-      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-    die();
-case "users":
-    ($logged)?
-      include_once "controllers/security/users.control.php":
-      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-    die();
-case "user":
-    ($logged)?
-      include_once "controllers/security/user.control.php":
-      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-    die();
-case "roles":
-    ($logged)?
-      include_once "controllers/security/roles.control.php":
-      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-    die();
-case "rol":
-    ($logged)?
-      include_once "controllers/security/rol.control.php":
-      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-    die();
-case "programas":
-    ($logged)?
-      include_once "controllers/security/programas.control.php":
-      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-    die();
-case "programa":
-    ($logged)?
-      include_once "controllers/security/programa.control.php":
-      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
-    die();
-}
 
-addToContext("pageRequest", $pageRequest);
-require_once "controllers/error.control.php";
+case "start":
+    ($logged)?
+      include_once "controllers/home.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+      die();
+case "storeL":
+    ($logged)?
+      include_once "controllers/store.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+      die();
+case "cartL":
+    ($logged)?
+      include_once "controllers/cart.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+      die();
+case "Users":
+    ($logged)?
+      include_once "controllers/security/Users.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
+case "User":
+    ($logged)?
+    include_once "controllers/security/User.control.php":
+    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+  die();
+case "Roles":
+  ($logged)?
+    include_once "controllers/security/Roles.control.php":
+    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+  die();
+case "Tipos":
+  ($logged)?
+    include_once "controllers/security/Tipos.control.php":
+    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+  die();
+case "Tipo":
+  ($logged)?
+    include_once "controllers/security/Tipo.control.php":
+    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+  die();
+case "Categorias":
+  ($logged)?
+    include_once "controllers/security/Categorias.control.php":
+    mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+  die();
+  case "Categoria":
+    ($logged)?
+      include_once "controllers/security/Categoria.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
+case "Modulos":
+    ($logged)?
+      include_once "controllers/security/Modulos.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
+case "Modulo":
+    ($logged)?
+      include_once "controllers/security/Modulo.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
+case "Accesos":
+    ($logged)?
+      include_once "controllers/security/Accesos.control.php":
+      mw_redirectToLogin($_SERVER["QUERY_STRING"]);
+    die();
+case "Acceso":

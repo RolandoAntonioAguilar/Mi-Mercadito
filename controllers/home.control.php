@@ -4,9 +4,20 @@
  * Created By OJBA
  * Last Modification 2014-10-14 20:04
  */
-
+require_once "libs/sendmail.php";
   function run(){
-    renderizar("home",Array());
+    $viewData = array();
+    if(isset($_GET["page"])){
+      switch($_GET["page"]){
+        case "start":
+            $viewData["store"]="storeL";
+            break;
+        default:
+            $viewData["store"]="store";
+      }
+    }else
+      $viewData["store"]="store";
+     renderizar("home",$viewData);
   }
   run();
 ?>

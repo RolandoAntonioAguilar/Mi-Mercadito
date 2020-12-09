@@ -1,4 +1,4 @@
- <div class="page-table">
+<div class="page-table">
         <br>
         <div class="action-title">
             <h1 class="row col-s-12">Control de Usuarios</h1>

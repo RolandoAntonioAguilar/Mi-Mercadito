@@ -1,175 +1,163 @@
 <?php
-/**
- * PHP Version 5
- * Modelo de Datos para la Usuarios y Seguridad.
- *
- * @category Data_Model
- * @package  Models\Security
- * @author   Orlando J Betancourth <orlando.betancourth@gmail.com>
- * @license  Comercial http://
- *
- * @version 1.0.0
- *
- * @link http://url.com
- */
+
 require_once "libs/dao.php" ;
 
-function obtenerUsuarioPorEmail($userEmail){
+function obtainUserByEmail($userEmail){
    $usuario = array();
-   $sqlstr = sprintf("SELECT `usercod`,`useremail`, `username`, `userpswd`,
-   UNIX_TIMESTAMP(`userfching`) as userfching, `userpswdest`, `userpswdexp`,
-   `userest`, `useractcod`, `userpswdchg`,
-   `usertipo`
-      FROM usuario where useremail = '%s';",$userEmail);
-   $usuario = obtenerUnRegistro($sqlstr);
+   $sqlStr = "SELECT `userCod`,`userEmail`, `userName`, `userPswd`,
+   UNIX_TIMESTAMP(`userRgstrd`) as userRgstrd, `userPswdState`, `userPswdExp`,
+   `userState`, `userVrfd`, `userPswdChg`,`userCell`
+   FROM user where userEmail = '%s';";
+   $usuario = obtenerUnRegistro(sprintf($sqlStr,$userEmail));
    return $usuario;
 }
-
-function obtenerUsuarioPorFiltro($userEmail, $userType){
+function userExists($mail){
+   $sqlStr = "SELECT COUNT(*) as `exists` FROM `user` where userEmail = '%s';";
+   $result = obtenerUnRegistro(sprintf($sqlStr,$mail));
+   return $result["exists"];
+}
+function getUserByFilter($userEmail){
    $usuario = array();
-   $sqlstr = sprintf("SELECT `usercod`, `useremail`, `username`,
-   `userest`, `usertipo`
-      FROM usuario where useremail like '%s' and usertipo like '%s';",
-      $userEmail.'%' , $userType);
-   $usuarios = obtenerRegistros($sqlstr);
+   $sqlStr = "SELECT `userCod`,`userEmail`, `userName`,
+   `userState`, `userCell`
+   FROM user  where userEmail like '%s';";
+
+   $usuarios = obtenerRegistros(sprintf($sqlStr,$userEmail.'%'));
    return $usuarios;
 }
 
-function obtenerUsuariosPorTipo($userType, $userEst='ACT', $userName ='%'){
- $usuario = array();
- $sqlstr = sprintf("SELECT `usercod`,`useremail`, `username`, `userpswd`,
- UNIX_TIMESTAMP(`userfching`) as userfching, `userpswdest`, `userpswdexp`,
- `userest`, `useractcod`, `userpswdchg`,
- `usertipo`
-    FROM usuario where usertipo = '%s' and userest='%s' and username like '%s';",
-      $userName,$userEst,$userName.'%');
-
- $usuario = obtenerRegistros($sqlstr);
- return $usuario;
-}
-
-function obtenerUsuarioPorCodigo($usercod){
+function getUserByCode($usercod){
    $usuario = array();
-   $sqlstr = sprintf("SELECT `usercod`,`useremail`, `username`,`userpswd`,
-     UNIX_TIMESTAMP(`userfching`) as userfching,
-   `userest`, `usertipo`
-      FROM usuario where usercod = %d;",$usercod);
-   $usuario = obtenerUnRegistro($sqlstr);
+   $sqlStr = sprintf("SELECT `userCod`,`userEmail`, `userName`,`userPswd`,
+     UNIX_TIMESTAMP(`userRgstrd`) as userRgstrd,`userState`,`userCell`
+      FROM user where userCod = %d;",intval($usercod));
+   $usuario = obtenerUnRegistro($sqlStr);
    return $usuario;
 }
 
-function estaEnRol($usercod, $rolcod){
-   $sqlstr = "select 1 as ok from roles_usuarios  where usercod = %d and rolescod = '%';";
-   $data = array();
-   $data = obtenerUnRegistro(sprintf($sqlstr,$usercod,$rolcod));
-   if(count($data) > 0){
-     return true;
-   }
-   return false;
-}
-
-function estaAutorizado($usercod, $assetcod){
-    $sqlstr = "select * from
-    funciones_roles a inner join roles_usuarios b on a.rolescod = b.rolescod
-    where a.fnrolest = 'ACT' and b.usercod=%d and a.fncod='%s' limit 1;";
-    $data = array();
-    $data = obtenerUnRegistro(sprintf($sqlstr,$usercod,$assetcod));
-    if(count($data) > 0){
+function authorized($userEmail, $assetcod){
+  $data = array();  
+  $sqlStr = "select u.userState from user u 
+            inner join `user_type` ut on u.userCod = ut.userCodUT
+            inner join `type` t on ut.typeCodUT = t.typeCod
+            inner join type_module tm on t.typeCod = tm.typeCod
+            where binary u.userEmail = '%s' and tm.mdlCod = '%s';";
+    $data = obtenerUnRegistro(sprintf($sqlStr,$userEmail,valstr($assetcod)));
+    if(!empty($data)){
         return true;
     }
     return false;
 }
+function makeMenu($userEmail){
+   $menu = array();
+   $sqlStr=" select m.mdlCod,m.mdlDscES FROM `user` u 
+               inner join `user_type` ut on u.userCod = ut.userCodUT
+               inner join `type` t on ut.typeCodUT = t.typeCod
+               inner join `type_module` tm on tm.typeCod = t.typeCod
+               inner join `module` m on m.mdlCod = tm.mdlCod
+               where m.mdlClass = 'MNU' and m.mdlState = 'ACT' and u.userEmail = '%s'
+               order by m.mdlDscES;";
+      $menu = obtenerRegistros(sprintf($sqlStr, $userEmail));
+   return $menu;
+}
+function newUser($userEmail, $userName,  $userPswd, $timestamp,$userCell='', $userState ='ACT',$userPswdState='ACT' ){
+   
+   $pwsdChangeTime= $timestamp;
 
-function insertUsuario($userName, $userEmail,
-                      $timestamp, $password, $userType = 'SYS', $userEst = 'ACT'){
-
-  //userType= 'SYS' usuario normal, 'CNS' Consultor , 'CLT' Cliente, 'ADM' administrador del sitio
-  //-----------------------------------------------------------------
-
-
-   $strsql = "INSERT INTO `usuario` (
-       `useremail`, `username`, `userpswd`,
-       `userfching`, `userpswdest`, `userpswdexp`,
-       `userest`, `useractcod`, `userpswdchg`,
-       `usertipo`) VALUES ('%s', '%s','%s',
-        FROM_UNIXTIME(%s), 'VGT', NULL,
-        '%s', '', NULL, '%s');";
-   $strsql = sprintf($strsql, valstr($userEmail),
-                               valstr($userName),
-                               $password,
-                               $timestamp,
-                               $userEst,
-                               $userType);
-
+   $strsql = "INSERT INTO `user` 
+   (`userEmail`, `userName`, `userPswd`,`userRgstrd`, `userPswdState`, `userPswdExp`,`userState`, `userVrfd`, `userCell`)
+   VALUES ('%s','%s','%s',FROM_UNIXTIME(%s),'%s',DATE_ADD(FROM_UNIXTIME(%s),INTERVAL 1 YEAR),'%s',false,'%s');";
+   $strsql = sprintf($strsql, 
+                    valstr($userEmail),
+                    valstr($userName),
+                    $userPswd,
+                    $timestamp,
+                    $userPswdState,
+                    $pwsdChangeTime,
+                    valstr($userState),
+                    $userCell);
    if(ejecutarNonQuery($strsql)){
        return getLastInserId();
    }
    return 0;
 }
+function updateUser($userCod,$userEmail, $userName,  $userPswd, $timestamp,$userCell=' ', $userState ='ACT',$userPswdState='ACT' ){
 
-function updateUsuario($usercod, $userName, $userEmail,
-                      $password, $userType, $userEst ){
+   $pwsdChangeTime= $timestamp;
 
-  //userType= 'SYS' usuario normal, 'CNS' Consultor , 'CLT' Cliente, 'ADM' administrador del sitio
-  //-----------------------------------------------------------------
-
-
-   $strsql = "UPDATE `usuario` set
-       `useremail` = '%s', `username` = '%s', `userpswd` = '%s',
-       `userest` = '%s',
-       `usertipo` = '%s' where `usercod` = %d;";
-   $strsql = sprintf($strsql, valstr($userEmail),
-                               valstr($userName),
-                               $password,
-                               $userEst,
-                               $userType, $usercod);
-
+   $strsql = "UPDATE `user` set `userEmail`='%s', `userName`='%s', `userPswd`='%s',`userRgstrd`=FROM_UNIXTIME(%s), 
+                           `userPswdState`='%s', `userPswdExp`= DATE_ADD(FROM_UNIXTIME(%s),INTERVAL 1 YEAR),`userState`='%s', `userCell`='%s',
+                           `userLM` = now() where `userCod` = %d;";
+   $strsql = sprintf($strsql, 
+                    valstr($userEmail),
+                    valstr($userName),
+                    $userPswd,
+                    $timestamp,
+                    $userPswdState,
+                    $pwsdChangeTime,
+                    valstr($userState),
+                    $userCell,
+                    intval($userCod));
    $affected = ejecutarNonQuery($strsql);
    return ($affected > 0);
 }
-//funciones adiciones para datos
-function getTiposUsuario(){
- return array(
-   array("codigo"=>"ADM","valor"=>"Administrador"),
-   array("codigo"=>"USR","valor"=>"Usuario"),
-   array("codigo"=>"CNS","valor"=>"Consultor"),
-   array("codigo"=>"CLT","valor"=>"Cliente")
- );
+function addRole($typeCod,$userCod,$userTypeState = 'ACT', $userTypeExp='NULL'){
+   $sqlIns = "INSERT INTO `user_type`(`typeCodUT`, `userCodUT`, `userTypeState`,`userTypeExp`,`userTypeRgstrd`)
+   VALUES('%s',%d,'%s',%s,now());";
+   $sqlIns = sprintf($sqlIns,$typeCod, intval($userCod), $userTypeState, $userTypeExp);
+   $affected = ejecutarNonQuery($sqlIns);
+   return ($affected > 0);
+
+}
+function removeRole($typeCod,$userCod){
+   $sqlDel = "DELETE FROM `user_type` ut WHERE ut.userCodUT = %d and ut.typeCodUT = '%s'; ";
+   $result = ejecutarNonQuery(sprintf($sqlDel, intval($userCod), $typeCod));
+    if($result)
+        return TRUE;
+    else
+        return FALSE;
+}
+function userRoles($userCod){
+   $sqlStr ="SELECT t.typeCod,t.typeDsc,ut.userCodUT from `type` t 
+            left join `user_type` ut on t.typeCod = ut.typeCodUT
+            where ut.userCodUT = %d and t.typeState = 'ACT';";
+   $roles = array();
+   $roles = obtenerRegistros(sprintf($sqlStr, intval($userCod)));
+   return $roles;
+}
+function userAvalaibleRoles($userCod){
+   $sqlStr ="SELECT t.typeCod, t.typeDsc from `type` t 
+            left join `user_type` ut on t.typeCod = ut.typeCodUT and ut.userCodUT = '%d'
+            where ut.userCodUT is null and t.typeState = 'ACT' ;";
+   $roles = array();
+   $roles = obtenerRegistros(sprintf($sqlStr, intval($userCod)));
+   return $roles;
+}
+function updateUserNameCell($userName,$userCell,$userCod){
+   $sqlStr = "UPDATE  `user` set `userName` = '%s' ,`userCell` = '%s' where `userCod` = %d ; ";
+   $result = ejecutarNonQuery(sprintf($sqlStr,$userName,$userCell,$userCod));
+   return ($result > 0);
+}
+function updatePassword($userCod, $userPswd,$userRgstrd){
+   $sqlUpd = "UPDATE `user` set `userPswd` = '%s' , `userRgstrd` = FROM_UNIXTIME(%s) where `userCod` = %d ;";
+   $result = ejecutarNonQuery(sprintf($sqlUpd,$userPswd, $userRgstrd,$userCod));
+   return ($result > 0);   
+}
+function updatePasswordByMail($userEmail, $userPswd,$userRgstrd){
+   $sqlUpd = "UPDATE `user` set `userPswd` = '%s' , `userRgstrd` = FROM_UNIXTIME(%s) where `userEmail` = '%s' ;";
+   $result = ejecutarNonQuery(sprintf($sqlUpd,$userPswd, $userRgstrd,$userEmail));
+   return ($result > 0);   
+}
+function userToken($userEmail){
+   $sqlStr = "SELECT `userPswdChg`
+   FROM user where userEmail = '%s';";
+   $usuario = obtenerUnRegistro(sprintf($sqlStr,$userEmail));
+   return $usuario["userPswdChg"];  
 }
 
-function getEstadoUsuario(){
- return array(
-   array("codigo"=>"PND","valor"=>"Sin Activar"),
-   array("codigo"=>"ACT","valor"=>"Activo"),
-   array("codigo"=>"SPD","valor"=>"Suspendido"),
-   array("codigo"=>"INA","valor"=>"Inactivo")
- );
-}
-
-function obtenerRolesDisponibles($usercod){
-  $sqlstr = "select b.rolescod, b.rolesdsc, a.usercod
-from roles b left join roles_usuarios a
-on a.rolescod = b.rolescod and a.usercod=%d
-where a.usercod is null ;";
-  $roles = obtenerRegistros(sprintf($sqlstr, $usercod));
-  return $roles;
-}
-function obtenerRolesUsuario($usercod){
-  $sqlstr = "select b.rolescod, b.rolesdsc, a.usercod
-from roles b inner join roles_usuarios a
-on a.rolescod = b.rolescod
-where a.usercod = %d ;";
-  $roles = obtenerRegistros(sprintf($sqlstr, $usercod));
-  return $roles;
-}
-function agregarRolaUsuario($rolcod,$usercod){
- $sqlstr = "INSERT INTO `roles_usuarios` (`usercod`, `rolescod`,`roleuserest`,`roleuserfch`)
-            VALUES (%d, '%s','ACT' ,now());";
-  return ejecutarNonQuery(sprintf($sqlstr, $usercod, $rolcod));
-}
-
-function eliminarRolaUsuario($rolcod,$usercod){
-  $sqlstr = "Delete from`roles_usuarios` where  `usercod`= %d and `rolescod` = '%s';";
-  return ejecutarNonQuery(sprintf($sqlstr, $usercod, $rolcod));
+function forgotPassword($userEmail,$token){
+   $sqlUpd = "UPDATE `user` set `userPswdChg` = '%s' where `userEmail` = '%s'; ";
+   $result = ejecutarNonQuery(sprintf($sqlUpd,$token,$userEmail));
+   return ($result > 0);  
 }
 ?>

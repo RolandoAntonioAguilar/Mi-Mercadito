@@ -1,0 +1,1 @@
+INSERT INTO `eCommerce`.`payment` (`paymentCod`, `paymentDscES`, `paymentDscEN`, `paymentLib`, `paymentState`) VALUES ('PPL', 'Pago Con Paypal', ' ', 'paypal', 'ACT');

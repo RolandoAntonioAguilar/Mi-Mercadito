@@ -18,11 +18,11 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'libs/Mail/Exception.php';
-require 'libs/Mail/PHPMailer.php';
-require 'libs/Mail/SMTP.php';
+require 'vendor/libPhpMailer/src/Exception.php';
+require 'vendor/libPhpMailer/src/PHPMailer.php';
+require 'vendor/libPhpMailer/src/SMTP.php';
 //Load Composer's autoloader
-//require 'vendor/autoload.php';
+require 'vendor/libPhpMailer/autoload.php';
 
 require_once 'libs/parameters.php';
 
@@ -47,7 +47,7 @@ function sendemail($to, $subjet, $message)
         $mail->CharSet = 'UTF-8';
         $mail->SMTPKeepAlive = true;
         $mail->Mailer = "smtp";
-        $mail->SMTPDebug = 2;                                 // Enable verbose debug output
+        $mail->SMTPDebug = 0;                                 // Enable verbose debug output
         $mail->isSMTP();                                      // Set mailer to use SMTP
         $mail->Host = $emailHost;   // Specify main and backup SMTP servers
         $mail->SMTPAuth = true;                               // Enable SMTP authentication
@@ -58,7 +58,7 @@ function sendemail($to, $subjet, $message)
         $mail->Port = $smtpPort;                                    // TCP port to connect to
 
         //Recipients
-        $mail->setFrom('noreply@mvc.biz', 'Servicio');
+        $mail->setFrom('noreply@e-commerce.hn', 'e-commerce');
         // $mail->addAddress('joe@example.net', 'Joe User');     // Add a recipient
         $mail->addAddress($to);               // Name is optional
         // $mail->addReplyTo('info@example.com', 'Information');

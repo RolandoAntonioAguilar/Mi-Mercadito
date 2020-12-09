@@ -1,35 +1,22 @@
 <?php
 require 'models/security/security.model.php';
-require 'models/security/programas.model.php';
 
-function generarMenu($usercod)
+function generarMenu($userEmail)
 {
     $menu = array();
-    if(isAuthorized('dashboard',$usercod))$menu[] = array("mdlprg"=>"dashboard","mdldsc"=>"Administración");
+    $menu = makeMenu($userEmail);
     addToContext('appmenu', $menu);
 }
 
-function isAuthorized($assetCode, $usercod)
+function isAuthorized($assetCode, $userEmail)
 {
-    $programa = obtenerFuncionPorCodigo($assetCode);
+    /*$programa = obtenerFuncionPorCodigo($assetCode);
     if (count($programa) == 0) {
         insertFuncion($assetCode, $assetCode, 'ACT', 'PRG');
     }
     if ($_SESSION["userType"] == 'ADM') {
         return true;
-    }
-    return estaAutorizado($usercod, $assetCode);
-}
-
-function hasAccess($functionCode, $usercod)
-{
-    $programa = obtenerFuncionPorCodigo($assetCode);
-    if (count($programa) == 0) {
-        insertPrograma($assetCode, $assetCode, 'ACT', 'FNC');
-    }
-    if ($_SESSION["userType"] == 'ADM') {
-        return true;
-    }
-    return estaAutorizado($usercod, $assetCode);
+    }*/
+    return authorized($userEmail, $assetCode);
 }
 ?>
